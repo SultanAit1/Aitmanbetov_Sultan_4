@@ -22,4 +22,4 @@ urlpatterns = [
     path('hello/', hello),
     path('nowdate/', now_date),
     path('goodbye/', goodbye),
-    path('post/', post_view)
+    path('post/', post_view)]
