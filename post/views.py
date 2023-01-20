@@ -1,22 +1,35 @@
-from django.shortcuts import HttpResponse, render
-from datetime import datetime
-from post.models import Product
-
+from django.shortcuts import render
+from post.models import Product, Review
 
 # Create your views here.
 
+def main(requests):
+    if requests.method == 'GET':
+        return render(requests, 'layosts/index.html')
 
-def main_view(request):
-    if request.method == 'GET':
-        return render(request, 'layosts/index.html')
 
-
-def products_view(request):
-    if request.method == 'GET':
+def products_view(requests):
+    if requests.method == 'GET':
         products = Product.objects.all()
 
         context = {
             'products': products
         }
+        return render(requests, 'posts/post.html', context=context)
 
-        return render(request, 'posts/post.html', context=context)
+def inproducts_view(requests):
+    if requests.method == 'GET':
+        return render(requests, 'posts/post.html')
+
+
+def product_detail_view(requests, id):
+    if requests.method == 'GET':
+        product = Product.objects.get(id=id)
+        review = Review.objects.filter(product=product)
+
+        context = {
+            'product': product,
+            'reviews': review
+        }
+
+        return render(requests, 'posts/detail.html', context=context)

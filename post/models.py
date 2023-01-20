@@ -11,3 +11,8 @@ class Product(models.Model):
     rate = models.FloatField()
     create_date = models.DateField(auto_now_add=True)
     modified_date = models.DateField(auto_now=True)
+
+class Review(models.Model):
+    title = models.TextField()
+    characteristics = models.TextField()
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
