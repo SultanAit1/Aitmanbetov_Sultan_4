@@ -21,9 +21,9 @@ from post.views import main, products_view, inproducts_view, product_detail_view
 urlpatterns = [
     path('', main),
     path('admin/', admin.site.urls),
-    path('products/', products_view),
+    path('post/', products_view),
     # path('main_view/', main_view),
-    path('products/', inproducts_view),
-    path('products/<int:id>/', product_detail_view)
+    path('post/', inproducts_view),
+    path('post/<int:id>/', product_detail_view)
 ]
 

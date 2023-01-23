@@ -12,6 +12,7 @@ class Product(models.Model):
     create_date = models.DateField(auto_now_add=True)
     modified_date = models.DateField(auto_now=True)
 
+
 class Review(models.Model):
     title = models.TextField()
     characteristics = models.TextField()
