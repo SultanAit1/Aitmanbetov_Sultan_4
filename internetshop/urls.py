@@ -15,15 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from post.views import main, products_view, inproducts_view, product_detail_view
+from products.views import main, products_view, main_view, inproducts_view, product_detail_view, categories_view
+from django.conf.urls.static import static
+from internetshop.settings import MEDIA_URL, MEDIA_ROOT
 
 
 urlpatterns = [
     path('', main),
     path('admin/', admin.site.urls),
-    path('post/', products_view),
-    # path('main_view/', main_view),
-    path('post/', inproducts_view),
-    path('post/<int:id>/', product_detail_view)
+    path('products/', products_view),
+    path('main_view/', main_view),
+    path('products/', inproducts_view),
+    path('products/<int:id>/', product_detail_view),
+    path('categories/', categories_view)
 ]
+
+urlpatterns += static(MEDIA_URL, document_root= MEDIA_ROOT)
 
