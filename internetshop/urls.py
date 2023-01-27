@@ -27,7 +27,8 @@ urlpatterns = [
     path('main_view/', main_view),
     path('products/', inproducts_view),
     path('products/<int:id>/', product_detail_view),
-    path('categories/', categories_view)
+    path('categories/', categories_view),
+    path('products/create', products_view)
 ]
 
 urlpatterns += static(MEDIA_URL, document_root= MEDIA_ROOT)
