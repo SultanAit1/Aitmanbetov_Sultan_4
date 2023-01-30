@@ -1,7 +1,9 @@
-from products import forms
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from products.models import Product, Review, Category
+from products.forms import ProductCreateForm, ReviewCreateForm
 
+
+# Create your views here.
 
 def main(request):
     if request.method == 'GET':
@@ -16,31 +18,47 @@ def products_view(request):
         else:
             products = Product.objects.all()
         context = {
-            'products': products
+            'products': products,
+            'users': request.user
         }
         return render(request, 'products/products.html', context=context)
+
 
 def main_view(request):
     if request.method == 'GET':
         return render(request, 'layouts/index.html')
 
 
-def inproducts_view(request):
-    if request.method == 'GET':
-        return render(request, 'products/products.html')
-
-
 def product_detail_view(request, id):
     if request.method == 'GET':
-        product = Product.objects.get(id=id)
-        review = Review.objects.filter(product=product)
+        product_obj = Product.objects.get(id=id)
+        reviews = Review.objects.filter(product=product_obj)
 
         context = {
-            'products': product,
-            'reviews': review,
+            'product': product_obj,
+            'reviews': reviews,
+            'form': ReviewCreateForm,
         }
-
         return render(request, 'products/detail.html', context=context)
+    if request.method == 'POST':
+        product_obj = Product.objects.get(id=id)
+        reviews = Review.objects.filter(product=product_obj)
+        form = ReviewCreateForm(data=request.POST)
+        if form.is_valid() and not request.user.is_anonymous:
+            Review.objects.create(
+                author_id=request.user.id,
+                title=form.cleaned_data.get('title'),
+                product=product_obj
+            )
+            return redirect(f'/products/{product_obj.id}/')
+        else:
+            form.add_error('title', 'Неверное заполнение полей')
+        return render(request, 'products/detail.html', context={
+            'product': product_obj,
+            'reviews': reviews,
+            'form': form
+        })
+
 
 def categories_view(request):
     if request.method == 'GET':
@@ -52,28 +70,26 @@ def categories_view(request):
         return render(request, 'categories/index.html', context=context)
 
 
-def create_products_view(request):
-    if request.method == 'GET':
-        return render(request, 'products/create.html')
-    if request.method == 'PRODUCT':
-        data = request.PRODUCT
-        """data validation"""
-        errors = {}
+def create_product_view(request):
+    if request.method == 'GET' and not request.user.is_anonymous:
+        context = {
+            'form': ProductCreateForm
+        }
+        return render(request, 'products/create.html', context=context)
+    elif request.user.is_anonymous:
+        return redirect('/products')
 
-        if len(data['title'])<5:
-            errors['title_error'] = 'Min Length 5'
+    if request.method == 'POST':
+        form = ProductCreateForm(data=request.POST)
 
-        if len(data['description'])<8:
-            errors['description_error']= 'Min Length 8'
-
-        """ if all OK create ptoduct"""
-        if errors.keys().__len__()<1:
-            Product.object.create(
-                title=data['title'],
-                description=data['description'],
-                rate=data['rate'] if data['rate'].__len__() > 0 else 5
+        if form.is_valid():
+            Product.objects.create(
+                title=form.cleaned_data.get('title'),
+                description=form.cleaned_data.get('description'),
+                price=form.cleaned_data['price'] if form.cleaned_data['price'] is not None else 0,
+                rate=form.cleaned_data['rate'] if form.cleaned_data['rate'] is not None else 5,
             )
-            return redirect('/products')
-
-        return render(request, 'products/create.html', context={'errors' : errors})
-
+            return redirect('/products/')
+        return render(request, 'products/create.html', context={
+            'form': form
+        })

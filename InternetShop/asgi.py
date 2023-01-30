@@ -1,5 +1,5 @@
 """
-ASGI config for internetshop project.
+ASGI config for InternetShop project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'internetshop.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'InternetShop.settings')
 
 application = get_asgi_application()
